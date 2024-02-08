@@ -1,4 +1,4 @@
-This repository is designed for conducting performance tests using Apache JMeter. The project includes a Bitbucket pipeline configuration for running tests automatically and a Dockerfile for building a JMeter environment with additional plugins. Below, you'll find instructions on how to get strtaed with theproject , adding new JMeter tests, running tests on Bitbucket, and developing locally.
+This repository is designed for conducting performance tests using Apache JMeter. The project includes a Bitbucket pipeline configuration for running tests automatically and a Dockerfile for building a JMeter environment with additional plugins. Below, you'll find instructions on how to get started with the project , adding new JMeter tests, running tests on Bitbucket, and developing locally.
 
 ### Execute Existing Test on Bitbucket
 
@@ -39,7 +39,7 @@ This repository is designed for conducting performance tests using Apache JMeter
 
 - [JAVA] version 8 or higher
 
-- [JMeter] - the supported version provided as part of the project; the current version is 6.5.2 in the apache-jmeter-5.6.2 directory
+- [JMeter] - the supported version is 6.5.2
 
 #### Setup Instructions
 
