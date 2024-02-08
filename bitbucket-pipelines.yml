@@ -1,0 +1,62 @@
+image: dmitrymazur/jmeter:5.6.2
+
+definitions:
+  variables: &default_variables
+    - name: JIRA
+      default: "JIRA-1234"
+    - name: ENVIRONMENT
+      default: "qe"
+      allowed-values:
+        - "qe"
+    - name: THREADS
+      default: "1"
+    - name: THREAD_LIFETIME
+      default: "30"
+    - name: TEST_NAME
+      default: "hitting-dummy-endpoint.jmx"
+    - name: DATA_FILE
+      default: "dummy-data.csv"
+    - name: JIRA_SERVICE_TOKEN
+      secure: true
+    - name: JIRA_SERVICE_EMAIL
+      default: "youremail@domain.com"
+    - name: JIRA_URL
+      default: "https://yourcompany.atlassian.net"
+  steps:
+    - step: &setup_artifacts
+        name: Setup artifact
+        artifacts:
+          - artifacts/**
+        script:
+          - mkdir -p artifacts
+    - step: &run_jmeter_test
+        name: Run JMeter Test
+        script:
+          - mkdir -p artifacts
+          - TIMESTAMP=$(date +%Y%m%d%H%M)
+          - jmeter -n -t jmeter-scripts/$TEST_NAME -JcsvPath=data/$DATA_FILE -Jthreads=$THREADS -JthreadLifetime=$THREAD_LIFETIME -l "artifacts/results_$TIMESTAMP.csv" -q config/${ENVIRONMENT}.properties -e -o "artifacts/html-report_$TIMESTAMP"
+          - cp jmeter.log "artifacts/jmeter_$TIMESTAMP.log"
+        artifacts:
+          - artifacts/**
+        after-script: &upload_and_create_jira
+          - ./ci-scripts/upload_and_create_jira.sh
+
+    - step: &upload_and_create_jira
+        name: Upload Results To Jira
+        script:
+          - ./ci-scripts/upload_and_create_jira.sh
+
+pipelines:
+  custom:
+    run_jmeter_load_test:
+      - variables: *default_variables
+      - step: *setup_artifacts
+      - step: *run_jmeter_test
+
+
+  branches: # This is the default branch pipeline that runs automatically on a commit
+    main:
+      - step:
+          name: Run Automated Pipelines
+          script:
+            - echo "Automated pipelines are cool too."
